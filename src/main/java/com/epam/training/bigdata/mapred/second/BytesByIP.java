@@ -17,7 +17,7 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
  *
  * Output format can be:
  * csv - for csv file,
- * seq - for sequence file.
+ * seq - for compressed sequence file.
  */
 public class BytesByIP {
 
@@ -31,6 +31,11 @@ public class BytesByIP {
 
         Configuration conf = new Configuration();
         conf.set("mapred.textoutputformat.separator", ",");
+        if ("seq".equals(args[2])) {
+            conf.set("mapreduce.output.fileoutputformat.compress", "true");
+            conf.set("mapreduce.output.fileoutputformat.compress.codec", "org.apache.hadoop.io.compress.SnappyCodec");
+            conf.set("mapreduce.output.fileoutputformat.compress.type", "BLOCK");
+        }
 
         Job job = Job.getInstance(conf, "Bytes by IP");
         job.setJarByClass(BytesByIP.class);
